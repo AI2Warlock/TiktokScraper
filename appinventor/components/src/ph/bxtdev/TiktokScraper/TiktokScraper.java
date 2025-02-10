@@ -47,29 +47,94 @@ public class TiktokScraper extends AndroidNonvisibleComponent {
 
     @SimpleFunction(description = "Gets video info")
     public String GetVideoInfo(final String videoUrl, final String id) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/video/info_v2?video_url=" + encodeUrl(videoUrl) + "&video_id=" + id);
+    }
+
+    @SimpleFunction(description = "Fetches videos associated with a user")
+    public String GetAllVideos(final String secureUserId) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/user/videos_v2?sec_uid=" + secureUserId);
+    }
+
+    @SimpleFunction(description = "Fetches videos associated with a music ID")
+    public String GetMusicVideo(final String musicId) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/music/videos?music_id=" + musicId);
+    }
+
+    @SimpleFunction(description = "Fetches playlist of a user")
+    public String GetUserPlaylist(final String secureUserId) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/user/playlist?sec_uid=" + secureUserId);
+    }
+
+    @SimpleFunction(description = "Fetches the list of videos liked by a user")
+    public String GetUserLikes(final String secureUserId) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/user/likes?sec_uid=" + secureUserId);
+    }
+
+    @SimpleFunction(description = "Fetches replies for a specific comment on a video")
+    public String GetVideoCommentReply(final String commentId, final String videoId) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/video/comment_reply?comment_id=" + commentId + "&video_id=" + videoId);
+    }
+
+    @SimpleFunction(description = "Fetches the list of users a user is following")
+    public String GetUserFollowing(final String secureUserId) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/user/following?sec_uid=" + secureUserId);
+    }
+
+    @SimpleFunction(description = "Fetches the list of followers of a user")
+    public String GetUserFollower(final String secureUserId) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/user/follower?sec_uid=" + secureUserId);
+    }
+
+    @SimpleFunction(description = "Fetches videos uploaded by a user")
+    public String GetUserVideos(final String secureUserId) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/user/videos?sec_uid=" + secureUserId);
+    }
+
+    @SimpleFunction(description = "Fetches info about a user based on their username")
+    public String GetUserInfo(final String username) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/user/info?user_name=" + username);
+    }
+
+    @SimpleFunction(description = "Fetches the comments on a video")
+    public String GetVideoComments(final String videoUrl) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/video/comments?video_url=" + encodeUrl(videoUrl));
+    }
+
+    @SimpleFunction(description = "Gets music info")
+    public String GetMusicInfo(final String musicId) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/music/info?music_id=" + musicId);
+    }
+
+    @SimpleFunction(description = "Gets videos by hashtag")
+    public String GetHashtagVideos(final String hashtagId) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/hashtag/videos?hashtag_id=" + hashtagId);
+    }
+
+    @SimpleFunction(description = "Gets info about hashtag")
+    public String GetHashtagInfo(final String hashtag) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/hashtag/info?hashtag=" + hashtag);
+    }
+
+    @SimpleFunction(description = "Gets video without watermark")
+    public String GetVideoNoWatermark(final String videoUrl) {
+        return fetchData("https://tiktok-scraper2.p.rapidapi.com/video/no_watermark?video_url=" + encodeUrl(videoUrl));
+    }
+
+
+    private String fetchData(final String apiUrl) {
         AsynchUtil.runAsynchronously(new Runnable() {
             @Override
             public void run() {
                 HttpURLConnection connection = null;
                 BufferedReader reader = null;
                 try {
-                    // URL encode the video URL
-                    String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-
-                    // Construct the API URL
-                    URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/video/info_v2?video_url=" + encodedVideoUrl + "&video_id=" + id);
-
-                    // Open the connection
+                    URL url = new URL(apiUrl);
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setRequestProperty("x-rapidapi-key", key);
                     connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-
-                    // Set timeout values
                     connection.setConnectTimeout(5000);
                     connection.setReadTimeout(5000);
-
-                    // Connect to the API
                     connection.connect();
 
                     InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
@@ -81,658 +146,28 @@ public class TiktokScraper extends AndroidNonvisibleComponent {
                         response.append(line);
                     }
 
-                    // Run on the UI thread to return the result
-                    final String finalResponse = response.toString();
+                    final String result = response.toString();
+
                     form.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            return finalResponse;
+                            return result;
                         }
                     });
+
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
-              }
+                } 
             }
         });
     }
 
-    @SimpleFunction(description = "Fetches videos associated with a user")
-public String GetAllVideos(final String secureUserId) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/user/videos_v2?sec_uid=" + secureUserId);
 
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private String encodeUrl(String url) {
+        try {
+            return URLEncoder.encode(url, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    });
-}
-
-@SimpleFunction(description = "Fetches videos associated with a music ID")
-public String GetMusicVideo(final String musicId) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/music/videos?music_id=" + musicId);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-@SimpleFunction(description = "Fetches playlist of a user")
-public String GetUserPlaylist(final String secureUserId) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/user/playlist?sec_uid=" + secureUserId);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-@SimpleFunction(description = "Fetches the list of videos liked by a user")
-public String GetUserLikes(final String secureUserId) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/user/likes?sec_uid=" + secureUserId);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-@SimpleFunction(description = "Fetches replies for a specific comment on a video")
-public String GetVideoCommentReply(final String commentId, final String videoId) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/video/comment_reply?comment_id=" + commentId + "&video_id=" + videoId);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-@SimpleFunction(description = "Fetches the list of users a user is following")
-public String GetUserFollowing(final String secureUserId) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/user/following?sec_uid=" + secureUserId);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-@SimpleFunction(description = "Fetches the list of followers of a user")
-public String GetUserFollower(final String secureUserId) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/user/follower?sec_uid=" + secureUserId);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-@SimpleFunction(description = "Fetches videos uploaded by a user")
-public String GetUserVideos(final String secureUserId) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/user/videos?sec_uid=" + secureUserId);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-@SimpleFunction(description = "Fetches info about a user based on their username")
-public String GetUserInfo(final String username) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/user/info?user_name=" + username);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-@SimpleFunction(description = "Fetches the comments on a video")
-public String GetVideoComments(final String videoUrl) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/video/comments?video_url=" + videoUrl);
-
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-     });
-   }
-
-   @SimpleFunction(description = "Gets music info")
-public String GetMusicInfo(final String musicId) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                // Construct the API URL
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/music/info?music_id=" + musicId);
-
-                // Open the connection
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-
-                // Set timeout values
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                // Connect to the API
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                // Run on the UI thread to return the result
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-@SimpleFunction(description = "Gets videos by hashtag")
-public String GetHashtagVideos(final String hashtagId) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                // Construct the API URL
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/hashtag/videos?hashtag_id=" + hashtagId);
-
-                // Open the connection
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-
-                // Set timeout values
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                // Connect to the API
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                // Run on the UI thread to return the result
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-@SimpleFunction(description = "Gets info about hashtag")
-public String GetHashtagInfo(final String hashtag) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                // Construct the API URL
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/hashtag/info?hashtag=" + hashtag);
-
-                // Open the connection
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-
-                // Set timeout values
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                // Connect to the API
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                // Run on the UI thread to return the result
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-         }
-     });
-  }
-
-  @SimpleFunction(description = "Gets video without watermark")
-  public String GetVideoNoWatermark(final String videoUrl) {
-      AsynchUtil.runAsynchronously(new Runnable() {
-         @Override
-         public void run() {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                // URL encode the video URL
-                String encodedVideoUrl = URLEncoder.encode(videoUrl, StandardCharsets.UTF_8);
-
-                // Construct the API URL
-                URL url = new URL("https://tiktok-scraper2.p.rapidapi.com/video/no_watermark?video_url=" + encodedVideoUrl);
-
-                // Open the connection
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("x-rapidapi-key", key);
-                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
-
-                // Set timeout values
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-
-                // Connect to the API
-                connection.connect();
-
-                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-                reader = new BufferedReader(inputStreamReader);
-                StringBuilder response = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                // Run on the UI thread to return the result
-                final String finalResponse = response.toString();
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        return finalResponse;
-                    }
-                });
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-         }
-     });
-   }
+    }
 }
