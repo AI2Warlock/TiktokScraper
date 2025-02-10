@@ -127,6 +127,7 @@ public class TiktokScraper extends AndroidNonvisibleComponent {
             public void run() {
                 HttpURLConnection connection = null;
                 BufferedReader reader = null;
+                String result = null; 
                 try {
                     URL url = new URL(apiUrl);
                     connection = (HttpURLConnection) url.openConnection();
@@ -146,7 +147,7 @@ public class TiktokScraper extends AndroidNonvisibleComponent {
                         response.append(line);
                     }
 
-                    final String result = response.toString();
+                    result = response.toString();
 
                     form.runOnUiThread(new Runnable() {
                         @Override
