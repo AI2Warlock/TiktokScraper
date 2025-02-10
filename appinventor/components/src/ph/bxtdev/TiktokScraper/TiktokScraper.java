@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import com.google.appinventor.components.annotations.*;
 import com.google.appinventor.components.common.ComponentCategory;
-import com.google.appinventor.components.runtime.AndroidNonvisibleComponent;
-import com.google.appinventor.components.runtime.ComponentContainer;
-import com.google.appinventor.components.runtime.EventDispatcher;
+import com.google.appinventor.components.runtime.*;
 import com.google.appinventor.components.runtime.util.*;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -121,20 +119,62 @@ public class TiktokScraper extends AndroidNonvisibleComponent {
     }
 
     private void fetchData(final String apiUrl) {
-        AsynchUtil.runAsynchronously(new Runnable() {
-            @Override
-            public void run() {
-                // ... (Network request code - Same as before.  Use result[0])
+    AsynchUtil.runAsynchronously(new Runnable() {
+        @Override
+        public void run() {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            String result = null;
 
-                form.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Got(result[0]); // Trigger the Got event with the result
+            try {
+                URL url = new URL(apiUrl);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("x-rapidapi-key", key);
+                connection.setRequestProperty("x-rapidapi-host", "tiktok-scraper2.p.rapidapi.com");
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+                connection.connect();
+
+                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
+                reader = new BufferedReader(inputStreamReader);
+                StringBuilder response = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+
+                result = response.toString(); // Assign the string, not an array
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                result = "Error: " + e.getMessage(); // Store the error message
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
             }
-        });
-    }
+
+            final String finalResult = result; // Make a final copy for runOnUiThread
+
+            form.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Got(finalResult); // Trigger the Got event
+                }
+            });
+        }
+    });
+  }
 
     private String encodeUrl(String url) {
         try {
