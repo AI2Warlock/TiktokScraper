@@ -164,12 +164,12 @@ public class TiktokScraper extends AndroidNonvisibleComponent {
                 }
             }
 
-            final String finalResult = result; // Make a final copy for runOnUiThread
+            final String finalResult = result; 
 
             form.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Got(finalResult); // Trigger the Got event
+                    Got(finalResult); 
                 }
             });
         }
@@ -182,7 +182,7 @@ public class TiktokScraper extends AndroidNonvisibleComponent {
         } catch (Exception e) {
             e.printStackTrace();
         }
-            return;
+            return "";
     }
 
         @SimpleEvent(description = "Event triggered when data is fetched")
