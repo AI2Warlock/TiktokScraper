@@ -182,6 +182,7 @@ public class TiktokScraper extends AndroidNonvisibleComponent {
         } catch (Exception e) {
             e.printStackTrace();
         }
+            return;
     }
 
         @SimpleEvent(description = "Event triggered when data is fetched")
