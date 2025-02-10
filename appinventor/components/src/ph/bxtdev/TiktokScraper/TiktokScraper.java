@@ -685,10 +685,10 @@ public String GetHashtagInfo(final String hashtag) {
   }
 
   @SimpleFunction(description = "Gets video without watermark")
-public String GetVideoNoWatermark(final String videoUrl) {
-    AsynchUtil.runAsynchronously(new Runnable() {
-        @Override
-        public void run() {
+  public String GetVideoNoWatermark(final String videoUrl) {
+      AsynchUtil.runAsynchronously(new Runnable() {
+         @Override
+         public void run() {
             HttpURLConnection connection = null;
             BufferedReader reader = null;
             try {
@@ -732,7 +732,7 @@ public String GetVideoNoWatermark(final String videoUrl) {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    });
-  }
+         }
+     });
+   }
 }
